@@ -113,17 +113,5 @@ def stock_value_calc():
     # 保存excel
     wm.close_workbook(work_book)
 
-def get_profit_table():
-    stock_financial_report_sina_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="利润表")
-    stock_financial_report_sina_df.to_csv(cv.stock_code+'_profit.csv', encoding='utf_8_sig')
-
-def get_balance_table():
-    stock_financial_report_sina_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="资产负债表")
-    stock_financial_report_sina_df.to_csv(cv.stock_code + '_balance.csv', encoding='utf_8_sig')
-
-def get_cashflow_table():
-    stock_financial_report_sina_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="现金流量表")
-    stock_financial_report_sina_df.to_csv(cv.stock_code + '_cashflow.csv', encoding='utf_8_sig')
-
 if __name__ == '__main__':
     stock_value_calc()
