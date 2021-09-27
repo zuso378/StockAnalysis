@@ -3,10 +3,8 @@ import datetime
 import akshare as ak
 import pandas as pd
 import numpy as np
-from openpyxl.utils.dataframe import dataframe_to_rows
-import workbook_manage as wm
 import control_variables as cv
-
+import workbook_manage as wm
 
 def get_ipo_info():
     stock_ipo_info_df = ak.stock_ipo_info(cv.stock_code)
@@ -77,41 +75,38 @@ def stock_value_calc():
     valid_data_df = pd.DataFrame(valid_data_dic)
     valid_data_df['年底持股'] = get_value_in_end_of_year(valid_data_df)
     print(valid_data_df.to_string())
-
-    # 写入excel
-    work_book = wm.open_workbook()
-    work_sheet = work_book.create_sheet(get_sheet_name())
-
+    # 生成excel对象
+    wb_manage = wm.Workbook_Manage(get_sheet_name())
     # 表格写入excel
-    for row in dataframe_to_rows(valid_data_df):
-        work_sheet.append(row[1:])
-
+    wb_manage.write_dataframe(valid_data_df)
     # 加两行空行
-    work_sheet.append([])
-    work_sheet.append([])
-
+    wb_manage.write_array([])
+    wb_manage.write_array([])
     # 计算第二年持股市值，写入excel
-    orig_stock_value = valid_data_df.iloc[1]['后一交易日股价'] * valid_data_df.iloc[1]['年底持股']
-    write_info = f'{valid_data_df.iloc[1]["后一交易日日期"]} 持股市值 = {orig_stock_value}'
-    print(write_info)
-    work_sheet.append([write_info])
-
+    wb_manage.write_string(start_market_value_str(valid_data_df))
     # 计算最后一次分红后持股市值，写入excel
-    now_stock_value = valid_data_df.iloc[-1]['后一交易日股价'] * valid_data_df.iloc[-1]['年底持股']
-    write_info = f'{valid_data_df.iloc[-1]["后一交易日日期"]} 持股市值 = {now_stock_value}'
-    print(write_info)
-    work_sheet.append([write_info])
-
+    wb_manage.write_string(now_stock_value_str(valid_data_df))
     # 计算收益率，写入excel
-    total_years = int(valid_data_df.iloc[-1]["实施年份"]) - int(valid_data_df.iloc[1]["实施年份"])
-    total_times = now_stock_value // orig_stock_value
-    annualized_rate_of_return = (pow(total_times, 1 / total_years) - 1) * 100
-    write_info = f'{total_years} 年收益 {total_times} 倍，折合年化 {"%.2f" % annualized_rate_of_return}%'
-    print(write_info)
-    work_sheet.append([write_info])
+    wb_manage.write_string(rate_of_return_str(valid_data_df))
 
-    # 保存excel
-    wm.close_workbook(work_book)
+
+def orig_stock_value_calc(df):
+    return df.iloc[1]['后一交易日股价'] * df.iloc[1]['年底持股']
+
+def start_market_value_str(df):
+    return f'{df.iloc[1]["后一交易日日期"]} 持股市值 = {orig_stock_value_calc(df)}'
+
+def now_stock_value_calc(df):
+    return df.iloc[-1]['后一交易日股价'] * df.iloc[-1]['年底持股']
+
+def now_stock_value_str(df):
+    return f'{df.iloc[-1]["后一交易日日期"]} 持股市值 = {now_stock_value_calc(df)}'
+
+def rate_of_return_str(df):
+    total_years = int(df.iloc[-1]["实施年份"]) - int(df.iloc[1]["实施年份"])
+    total_times = now_stock_value_calc(df) // orig_stock_value_calc(df)
+    annualized_rate_of_return = (pow(total_times, 1 / total_years) - 1) * 100
+    return f'{total_years} 年收益 {total_times} 倍，折合年化 {"%.2f" % annualized_rate_of_return}%'
 
 if __name__ == '__main__':
     stock_value_calc()
