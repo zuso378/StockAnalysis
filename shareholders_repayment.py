@@ -8,6 +8,7 @@ import workbook_manage as wm
 
 def get_ipo_info():
     stock_ipo_info_df = ak.stock_ipo_info(cv.stock_code)
+    global ipo_day
     ipo_day = stock_ipo_info_df[stock_ipo_info_df['item']=='上市日期']['value'].values[0]
     ipo_price = stock_ipo_info_df[stock_ipo_info_df['item'].str.contains('发行价')]['value'].values[0]
     return ipo_day, float(ipo_price)
@@ -50,7 +51,7 @@ def get_value_in_end_of_year(data_df):
 def get_sheet_name():
     return '股东回报'
 
-def stock_value_calc():
+def stock_value_info():
     # 获取发行信息
     ipo_day, ipo_price = get_ipo_info()
     # 获取原始分红信息
@@ -79,15 +80,17 @@ def stock_value_calc():
     wb_manage = wm.Workbook_Manage(get_sheet_name())
     # 表格写入excel
     wb_manage.write_dataframe(valid_data_df)
-    # 加两行空行
-    wb_manage.write_array([])
-    wb_manage.write_array([])
+    return valid_data_df
+
+
+def stock_value_calc(df):
+    wb_manage = wm.Workbook_Manage(get_sheet_name())
     # 计算第二年持股市值，写入excel
-    wb_manage.write_string(start_market_value_str(valid_data_df))
+    wb_manage.write_string(start_market_value_str(df))
     # 计算最后一次分红后持股市值，写入excel
-    wb_manage.write_string(now_stock_value_str(valid_data_df))
+    wb_manage.write_string(now_stock_value_str(df))
     # 计算收益率，写入excel
-    wb_manage.write_string(rate_of_return_str(valid_data_df))
+    wb_manage.write_string(rate_of_return_str(df))
 
 
 def orig_stock_value_calc(df):
@@ -105,8 +108,33 @@ def now_stock_value_str(df):
 def rate_of_return_str(df):
     total_years = int(df.iloc[-1]["实施年份"]) - int(df.iloc[1]["实施年份"])
     total_times = now_stock_value_calc(df) // orig_stock_value_calc(df)
-    annualized_rate_of_return = (pow(total_times, 1 / total_years) - 1) * 100
-    return f'{total_years} 年收益 {total_times} 倍，折合年化 {"%.2f" % annualized_rate_of_return}%'
+    return f'{total_years} 年收益 {total_times} 倍，折合年化 {"%.2f" % annualized_rate_of_return_calc(total_years, total_times)}%'
+
+def profit_value_calc():
+    # 获取年报利润表
+    stock_profit_table_df = get_profit_table()
+    # 获取上市第一年，及上市第一年归母净利润
+    first_year, first_profit = get_first_year_profit(stock_profit_table_df)
+    # 获取最后一年，及最后一年归母净利润
+    last_year, last_profit = get_last_year_profit(stock_profit_table_df)
+    total_years = last_year - first_year
+    total_times = last_profit // first_profit
+    wb_manage = wm.Workbook_Manage(get_sheet_name())
+    wb_manage.write_string(f'{first_year} 年净利润为 {first_profit}，{last_year} 年净利润为 {last_profit}，{total_years} 年增长 {total_times} 倍，折合年化 {"%.2f" % annualized_rate_of_return_calc(total_years, total_times)}%')
+
+def get_profit_table():
+    stock_profit_table_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="利润表")
+    return stock_profit_table_df[stock_profit_table_df['报表日期'].str.contains('1231')]
+
+def get_first_year_profit(df):
+    return int(ipo_day[0:4]), np.double(df["归属于母公司所有者的净利润"][df["报表日期"].str[0:4]==ipo_day[0:4]].values[0])
+
+def get_last_year_profit(df):
+    return int(df.iloc[0]['报表日期'][0:4]), np.double(df.iloc[0]['归属于母公司所有者的净利润'])
+
+def annualized_rate_of_return_calc(years, times):
+    return (pow(times, 1 / years) - 1) * 100
 
 if __name__ == '__main__':
-    stock_value_calc()
+    stock_value_calc(stock_value_info())
+    profit_value_calc()

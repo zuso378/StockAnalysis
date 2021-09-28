@@ -13,7 +13,12 @@ class Workbook_Manage:
     def __init__(self, ws_n):
         self.__workbook_path = self.__get_workbook_path()
         self.__open_workbook()
-        self.__worksheet = self.__workbook.create_sheet(ws_n)
+        if ws_n in self.__workbook.sheetnames:
+            self.__worksheet = self.__workbook.get_sheet_by_name(ws_n)
+            self.write_array([])
+            self.write_array([])
+        else:
+            self.__worksheet = self.__workbook.create_sheet(ws_n)
 
     def __del__(self):
         self.__close_workbook()
