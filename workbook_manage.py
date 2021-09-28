@@ -34,7 +34,7 @@ class Workbook_Manage:
         self.__worksheet.append(arr)
 
     def __get_workbook_path(self):
-        return cv.stock_code + '_' + cv.stock_name + '.xlsx'
+        return cv.common_fname + '.xlsx'
 
     def __open_workbook(self):
         if os.path.exists(self.__workbook_path):

@@ -1,3 +1,4 @@
+from common_functions import log_to_csv
 import time, random
 import datetime
 import akshare as ak
@@ -8,13 +9,16 @@ import workbook_manage as wm
 
 def get_ipo_info():
     stock_ipo_info_df = ak.stock_ipo_info(cv.stock_code)
+    log_to_csv(stock_ipo_info_df, 'IPO信息')
     global ipo_day
     ipo_day = stock_ipo_info_df[stock_ipo_info_df['item']=='上市日期']['value'].values[0]
     ipo_price = stock_ipo_info_df[stock_ipo_info_df['item'].str.contains('发行价')]['value'].values[0]
     return ipo_day, float(ipo_price)
 
 def get_all_history_divided_detail():
-    return ak.stock_history_dividend_detail(indicator='分红', stock=cv.stock_code, date='')
+    stock_history_dividend_detail_df = ak.stock_history_dividend_detail(indicator='分红', stock=cv.stock_code, date='')
+    log_to_csv(stock_history_dividend_detail_df, '历史分红配股')
+    return stock_history_dividend_detail_df
 
 def get_implementation_divided_detail(df):
     return df.drop(df[(df['进度']=='预案')|(df['进度']=='不分配')].index)
@@ -124,6 +128,7 @@ def profit_value_calc():
 
 def get_profit_table():
     stock_profit_table_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="利润表")
+    log_to_csv(stock_profit_table_df, '利润表')
     return stock_profit_table_df[stock_profit_table_df['报表日期'].str.contains('1231')]
 
 def get_first_year_profit(df):
