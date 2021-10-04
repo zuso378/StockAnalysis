@@ -1,6 +1,7 @@
 from openpyxl import load_workbook
 from openpyxl import Workbook
 from openpyxl.utils.dataframe import dataframe_to_rows
+from openpyxl.chart import Reference, LineChart
 import os
 import control_variables as cv
 
@@ -24,7 +25,7 @@ class Workbook_Manage:
         self.__close_workbook()
 
     def write_dataframe(self, df):
-        for row in dataframe_to_rows(df):
+        for row in dataframe_to_rows(df, False):
             self.write_array(row)
 
     def write_string(self, str):
@@ -32,6 +33,15 @@ class Workbook_Manage:
 
     def write_array(self, arr):
         self.__worksheet.append(arr)
+
+    def write_line_chart(self, title, data_fields, axis_fields, pos):
+        chart = LineChart()
+        data = Reference(self.__worksheet, min_row=data_fields[0], max_row=data_fields[1], min_col=data_fields[2], max_col=data_fields[3])
+        chart.add_data(data, titles_from_data=True)
+        categories = Reference(self.__worksheet, min_row=axis_fields[0], max_row=axis_fields[1], min_col=axis_fields[2])
+        chart.set_categories(categories)
+        chart.title = title
+        self.__worksheet.add_chart(chart, pos)
 
     def __get_workbook_path(self):
         return cv.common_fname + '.xlsx'
