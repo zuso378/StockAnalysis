@@ -1,4 +1,4 @@
-from common_functions import log_to_csv
+from common_functions import log_to_csv, get_profit_table
 import time, random
 import datetime
 import akshare as ak
@@ -125,11 +125,6 @@ def profit_value_calc():
     total_times = last_profit // first_profit
     wb_manage = wm.Workbook_Manage(get_sheet_name())
     wb_manage.write_string(f'{first_year} 年净利润为 {first_profit}，{last_year} 年净利润为 {last_profit}，{total_years} 年增长 {total_times} 倍，折合年化 {"%.2f" % annualized_rate_of_return_calc(total_years, total_times)}%')
-
-def get_profit_table():
-    stock_profit_table_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="利润表")
-    log_to_csv(stock_profit_table_df, '利润表')
-    return stock_profit_table_df[stock_profit_table_df['报表日期'].str.contains('1231')]
 
 def get_first_year_profit(df):
     return int(ipo_day[0:4]), np.double(df["归属于母公司所有者的净利润"][df["报表日期"].str[0:4]==ipo_day[0:4]].values[0])
