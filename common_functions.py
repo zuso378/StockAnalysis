@@ -1,5 +1,33 @@
 import akshare as ak
+import numpy as np
 import control_variables as cv
+
+def growth_rate_calc(sr):
+    rate_list = []
+    pv = np.double(sr[0:1])
+    for value in sr.values:
+        v = np.double(value)
+        if 0==pv:
+            rate = 0
+        else:
+            rate = (v - pv) / pv
+        pv = v
+        rate_list.append(rate*100)
+    return rate_list
+
+def average_calc(df, ls):
+    avr_list = []
+    p_v = 0
+    for item in ls:
+        p_v += np.double(df.iloc[0][item])
+    for index, rows in df.iterrows():
+        v = 0
+        for item in ls:
+            v += np.double(rows[item])
+        avr_list.append((p_v+v)/2)
+        p_v = v
+    return avr_list
+
 
 def log_to_csv(df, name):
     csv_name = cv.common_fname + '_' + name + '.csv'

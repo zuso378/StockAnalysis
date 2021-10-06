@@ -2,25 +2,12 @@ import akshare as ak
 from openpyxl.worksheet import worksheet
 import pandas as pd
 import numpy as np
-from common_functions import get_profit_table, get_balance_table
+from common_functions import get_profit_table, get_balance_table, growth_rate_calc
 import control_variables as cv
 import workbook_manage as wm
 
 def get_sheet_name():
     return '异常数据筛选'
-
-def growth_rate_calc(sr):
-    rate_list = []
-    pv = np.double(sr[0:1])
-    for value in sr.values:
-        v = np.double(value)
-        if 0==pv:
-            rate = 0
-        else:
-            rate = (v - pv) / pv
-        pv = v
-        rate_list.append(rate*100)
-    return rate_list
 
 
 def balance_assets_data(df, sr):
