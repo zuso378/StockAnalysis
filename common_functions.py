@@ -28,6 +28,19 @@ def average_calc(df, ls):
         p_v = v
     return avr_list
 
+def ratio_calc(df, n_ls, d_ls, prct=1):
+    ratio_list = []
+    for index, rows in df.iterrows():
+        n = 0
+        d = 0
+        for item in n_ls:
+            n += np.double(rows[item])
+        for item in d_ls:
+            d += np.double(rows[item])
+        ratio_list.append(n/d * prct)
+    return ratio_list
+        
+
 
 def log_to_csv(df, name):
     csv_name = cv.common_fname + '_' + name + '.csv'

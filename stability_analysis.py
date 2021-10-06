@@ -2,7 +2,7 @@ import akshare as ak
 from openpyxl.worksheet import worksheet
 import pandas as pd
 import numpy as np
-from common_functions import get_profit_table, get_balance_table, growth_rate_calc
+from common_functions import get_profit_table, get_balance_table, growth_rate_calc, ratio_calc
 import control_variables as cv
 import workbook_manage as wm
 
@@ -51,21 +51,12 @@ def balance_liability_data(df, sr):
     start = df.shape[0] + 3 + 1
     wbm.write_line_chart('负债端数据增长率', [start,df.shape[0]+start,7,11],[2,df.shape[0]+1,1],f'N{start}')
 
-def profit_compare_calc(df):
-    oper_rate_list = []
-    net_ratio_list = []
-    three_ratio_list = []
-    for index, rows in df.iterrows():
-        profit_from_operation = np.double(rows['三、营业利润'])
-        oper_rate_list.append(profit_from_operation/np.double(rows['营业收入']) * 100)
-        net_ratio_list.append(np.double(rows['五、净利润'])/profit_from_operation * 100)
-        three_ratio_list.append((np.double(rows['资产减值损失'])+np.double(rows['公允价值变动收益'])+np.double(rows['投资收益']))/profit_from_operation * 100)
-    return oper_rate_list, net_ratio_list, three_ratio_list
-
 def profits_data(df):
     profits_data_df = df[['报表日期', '五、净利润', '三、营业利润', '营业收入', '资产减值损失', '公允价值变动收益', '投资收益']]
     # 营业利润率   ，  净利润/营业利润  ，  (资产减值损失+公允价值变动收益+投资收益)/营业利润
-    profits_data_df['营业利润率'], profits_data_df['净利占比'] , profits_data_df['三项占比']= profit_compare_calc(profits_data_df)
+    profits_data_df['营业利润率'] = ratio_calc(profits_data_df, ['三、营业利润'], ['营业收入'], 100)
+    profits_data_df['净利占比'] = ratio_calc(profits_data_df, ['五、净利润'], ['三、营业利润'], 100)
+    profits_data_df['三项占比']= ratio_calc(profits_data_df, ['资产减值损失', '公允价值变动收益', '投资收益'], ['三、营业利润'], 100)
     # 写入excel
     wbm = wm.Workbook_Manage(get_sheet_name())
     wbm.write_dataframe(profits_data_df)
