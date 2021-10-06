@@ -7,7 +7,7 @@ import control_variables as cv
 import workbook_manage as wm
 
 def get_sheet_name():
-    return '安全性分析'
+    return '异常数据筛选'
 
 def growth_rate_calc(sr):
     rate_list = []
@@ -24,9 +24,7 @@ def growth_rate_calc(sr):
 
 
 def balance_assets_data(df, sr):
-    balance_assets_data_df = df[['报表日期', '应收票据', '应收账款', '其他应收款', '长期待摊费用']].sort_values(by='报表日期')
-    # 报表日期只需要保留年份数据
-    balance_assets_data_df['报表日期'] = balance_assets_data_df['报表日期'].str[0:4]
+    balance_assets_data_df = df[['报表日期', '应收票据', '应收账款', '其他应收款', '长期待摊费用']]
     # 营业收入
     balance_assets_data_df['营业收入'] = sr
     # 计算 应收票据 增长率
@@ -46,9 +44,7 @@ def balance_assets_data(df, sr):
     wbm.write_line_chart('资产端数据增长率', [1,df.shape[0]+1,7,11],[2,df.shape[0]+1,1],'N1')
 
 def balance_liability_data(df, sr):
-    balance_assets_data_df = df[['报表日期', '短期借款', '应付票据', '应付账款', '其他应付款']].sort_values(by='报表日期')
-    # 报表日期只需要保留年份数据
-    balance_assets_data_df['报表日期'] = balance_assets_data_df['报表日期'].str[0:4]
+    balance_assets_data_df = df[['报表日期', '短期借款', '应付票据', '应付账款', '其他应付款']]
     # 营业收入
     balance_assets_data_df['营业收入'] = sr
     # 计算 应收票据 增长率
@@ -80,9 +76,7 @@ def profit_compare_calc(df):
     return oper_rate_list, net_ratio_list, three_ratio_list
 
 def profits_data(df):
-    profits_data_df = df[['报表日期', '五、净利润', '三、营业利润', '营业收入', '资产减值损失', '公允价值变动收益', '投资收益']].sort_values(by='报表日期')
-    # 报表日期只需要保留年份数据
-    profits_data_df['报表日期'] = profits_data_df['报表日期'].str[0:4]
+    profits_data_df = df[['报表日期', '五、净利润', '三、营业利润', '营业收入', '资产减值损失', '公允价值变动收益', '投资收益']]
     # 营业利润率   ，  净利润/营业利润  ，  (资产减值损失+公允价值变动收益+投资收益)/营业利润
     profits_data_df['营业利润率'], profits_data_df['净利占比'] , profits_data_df['三项占比']= profit_compare_calc(profits_data_df)
     # 写入excel

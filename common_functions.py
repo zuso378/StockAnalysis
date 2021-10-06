@@ -9,9 +9,23 @@ def log_to_csv(df, name):
 def get_profit_table():
     stock_profit_table_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="利润表")
     log_to_csv(stock_profit_table_df, '利润表')
-    return stock_profit_table_df[stock_profit_table_df['报表日期'].str.contains('1231')]
+    year_df = stock_profit_table_df[stock_profit_table_df['报表日期'].str.contains('1231')].sort_values(by='报表日期')
+    year_df['报表日期'] = year_df['报表日期'].str[0:4]
+    log_to_csv(year_df, '利润表_年报')
+    return year_df
 
 def get_balance_table():
-    stock_financial_report_sina_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="资产负债表")
-    log_to_csv(stock_financial_report_sina_df, '资产负债表')
-    return stock_financial_report_sina_df[stock_financial_report_sina_df['报表日期'].str.contains('1231')]
+    stock_balance_table_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="资产负债表")
+    log_to_csv(stock_balance_table_df, '资产负债表')
+    year_df = stock_balance_table_df[stock_balance_table_df['报表日期'].str.contains('1231')].sort_values(by='报表日期')
+    year_df['报表日期'] = year_df['报表日期'].str[0:4]
+    log_to_csv(year_df, '资产负债表_年报')
+    return year_df
+
+def get_cashflow_table():
+    stock_cashflow_table_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="现金流量表")
+    log_to_csv(stock_cashflow_table_df, '现金流量表')
+    year_df = stock_cashflow_table_df[stock_cashflow_table_df['报表日期'].str.contains('1231')].sort_values(by='报表日期')
+    year_df['报表日期'] = year_df['报表日期'].str[0:4]
+    log_to_csv(year_df, '现金流量表_年报')
+    return year_df
