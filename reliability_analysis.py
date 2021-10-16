@@ -17,8 +17,8 @@ def cash_debt_ratio_data():
     cash_debt_ratio_df = cf_df[['报表日期', '加:期初现金及现金等价物余额', '六、期末现金及现金等价物余额']]
     cash_debt_ratio_df = cash_debt_ratio_df.join(b_df[['短期借款', '交易性金融负债', '一年内到期的非流动负债', '长期借款', '应付债券', '交易性金融资产', '应收票据']])
     cash_debt_ratio_df['现金及现金等价物'] = average_cash_equivalents_calc(cash_debt_ratio_df)
-    cash_debt_ratio_df['有息负债'] = average_calc(cash_debt_ratio_df, ['短期借款', '交易性金融负债', '一年内到期的非流动负债'])
-    cash_debt_ratio_df['一年内到期的有息负债'] = average_calc(cash_debt_ratio_df, ['短期借款', '交易性金融负债', '一年内到期的非流动负债', '长期借款', '应付债券'])
+    cash_debt_ratio_df['有息负债'] = average_calc(cash_debt_ratio_df, ['短期借款', '交易性金融负债', '一年内到期的非流动负债', '长期借款', '应付债券'])
+    cash_debt_ratio_df['一年内到期的有息负债'] = average_calc(cash_debt_ratio_df, ['短期借款', '交易性金融负债', '一年内到期的非流动负债'])
     cash_debt_ratio_df['可迅速变现的金融资产净值'] = average_calc(cash_debt_ratio_df, ['交易性金融资产', '应收票据'])
     cash_debt_ratio_df['现金债务比'] = ratio_calc(cash_debt_ratio_df, ['现金及现金等价物'], ['有息负债'])
     cash_debt_ratio_df['现金债务比1'] = ratio_calc(cash_debt_ratio_df, ['现金及现金等价物','可迅速变现的金融资产净值'], ['有息负债'])
