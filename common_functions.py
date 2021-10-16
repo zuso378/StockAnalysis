@@ -1,12 +1,12 @@
 import akshare as ak
-import numpy as np
+from numpy import double
 import control_variables as cv
 
 def growth_rate_calc(sr):
     rate_list = []
-    pv = np.double(sr[0:1])
+    pv = float(sr[0:1])
     for value in sr.values:
-        v = np.double(value)
+        v = value
         if 0==pv:
             rate = 0
         else:
@@ -19,11 +19,11 @@ def average_calc(df, ls):
     avr_list = []
     p_v = 0
     for item in ls:
-        p_v += np.double(df.iloc[0][item])
+        p_v += df.iloc[0][item]
     for index, rows in df.iterrows():
         v = 0
         for item in ls:
-            v += np.double(rows[item])
+            v += rows[item]
         avr_list.append((p_v+v)/2)
         p_v = v
     return avr_list
@@ -34,9 +34,9 @@ def ratio_calc(df, n_ls, d_ls, prct=1):
         n = 0
         d = 0
         for item in n_ls:
-            n += np.double(rows[item])
+            n += rows[item]
         for item in d_ls:
-            d += np.double(rows[item])
+            d += rows[item]
         ratio_list.append(n/d * prct)
     return ratio_list
         
@@ -53,7 +53,8 @@ def get_profit_table():
     year_df = stock_profit_table_df[stock_profit_table_df['报表日期'].str.contains('1231')].sort_values(by='报表日期')
     year_df['报表日期'] = year_df['报表日期'].str[0:4]
     log_to_csv(year_df, '利润表_年报')
-    return year_df
+    year_df.drop('单位', axis=1, inplace=True)
+    return year_df.astype(float)
 
 def get_balance_table():
     stock_balance_table_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="资产负债表")
@@ -61,7 +62,8 @@ def get_balance_table():
     year_df = stock_balance_table_df[stock_balance_table_df['报表日期'].str.contains('1231')].sort_values(by='报表日期')
     year_df['报表日期'] = year_df['报表日期'].str[0:4]
     log_to_csv(year_df, '资产负债表_年报')
-    return year_df
+    year_df.drop('单位', axis=1, inplace=True)
+    return year_df.astype(float)
 
 def get_cashflow_table():
     stock_cashflow_table_df = ak.stock_financial_report_sina(stock=cv.stock_code, symbol="现金流量表")
@@ -69,4 +71,5 @@ def get_cashflow_table():
     year_df = stock_cashflow_table_df[stock_cashflow_table_df['报表日期'].str.contains('1231')].sort_values(by='报表日期')
     year_df['报表日期'] = year_df['报表日期'].str[0:4]
     log_to_csv(year_df, '现金流量表_年报')
-    return year_df
+    year_df.drop('单位', axis=1, inplace=True)
+    return year_df.astype(float)

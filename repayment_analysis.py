@@ -3,7 +3,6 @@ import time, random
 import datetime
 import akshare as ak
 import pandas as pd
-import numpy as np
 import control_variables as cv
 import workbook_manage as wm
 
@@ -127,10 +126,10 @@ def profit_value_calc():
     wb_manage.write_string(f'{first_year} 年净利润为 {first_profit}，{last_year} 年净利润为 {last_profit}，{total_years} 年增长 {total_times} 倍，折合年化 {"%.2f" % annualized_rate_of_return_calc(total_years, total_times)}%')
 
 def get_first_year_profit(df):
-    return int(ipo_day[0:4]), np.double(df["归属于母公司所有者的净利润"][df["报表日期"].str[0:4]==ipo_day[0:4]].values[0])
+    return int(ipo_day[0:4]), df["归属于母公司所有者的净利润"][df["报表日期"]==int(ipo_day[0:4])].values[0]
 
 def get_last_year_profit(df):
-    return int(df.iloc[0]['报表日期'][0:4]), np.double(df.iloc[0]['归属于母公司所有者的净利润'])
+    return df.iloc[0]['报表日期'], df.iloc[0]['归属于母公司所有者的净利润']
 
 def annualized_rate_of_return_calc(years, times):
     return (pow(times, 1 / years) - 1) * 100
