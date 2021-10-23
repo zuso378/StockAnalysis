@@ -129,11 +129,14 @@ def get_first_year_profit(df):
     return int(ipo_day[0:4]), df["归属于母公司所有者的净利润"][df["报表日期"]==int(ipo_day[0:4])].values[0]
 
 def get_last_year_profit(df):
-    return df.iloc[0]['报表日期'], df.iloc[0]['归属于母公司所有者的净利润']
+    return df.iloc[-1]['报表日期'], df.iloc[-1]['归属于母公司所有者的净利润']
 
 def annualized_rate_of_return_calc(years, times):
     return (pow(times, 1 / years) - 1) * 100
 
-if __name__ == '__main__':
+def repayment_analysis_data():
     stock_value_calc(stock_value_info())
     profit_value_calc()
+
+if __name__ == '__main__':
+    repayment_analysis_data()

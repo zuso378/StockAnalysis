@@ -67,12 +67,12 @@ def profits_data(df):
     wbm.write_line_chart('净利占比稳定性', [start,df.shape[0]+start,9,9],[2,df.shape[0]+1,1],f'AE{start}')
     wbm.write_line_chart('三项占比稳定性', [start,df.shape[0]+start,10,10],[2,df.shape[0]+1,1],f'AN{start}')
 
-
-if __name__ == '__main__':
+def stability_analysis_data():
     stock_profit_table_df = get_profit_table()
     stock_balance_table_df = get_balance_table()
     balance_assets_data(stock_balance_table_df, stock_profit_table_df['营业收入'])
     balance_liability_data(stock_balance_table_df, stock_profit_table_df['营业收入'])
     profits_data(stock_profit_table_df)
 
-
+if __name__ == '__main__':
+    stability_analysis_data()

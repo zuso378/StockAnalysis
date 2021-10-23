@@ -30,5 +30,8 @@ def cash_debt_ratio_data():
     row_count = cash_debt_ratio_df.shape[0]
     wbm.write_line_chart('现金债务比', [1,row_count+1,15,17],[2,row_count+1,1],f'A{row_count+3}')
 
-if __name__ == '__main__':
+def reliability_analysis_data():
     cash_debt_ratio_data()
+
+if __name__ == '__main__':
+    reliability_analysis_data()

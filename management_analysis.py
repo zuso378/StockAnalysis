@@ -26,7 +26,8 @@ def turnover_rate_data():
     wbm.write_line_chart('固定资产周转率', [1,turnover_rate_data_df.shape[0]+1,13,13],[2,turnover_rate_data_df.shape[0]+1,1],f'A{start+18}')
     wbm.write_line_chart('总资产周转率', [1,turnover_rate_data_df.shape[0]+1,14,14],[2,turnover_rate_data_df.shape[0]+1,1],f'J{start+18}')
 
-
+def management_analysis_data():
+    turnover_rate_data()
 
 if __name__ == '__main__':
-    turnover_rate_data()
+    management_analysis_data()

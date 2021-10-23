@@ -27,6 +27,9 @@ def assets_growth_data():
     start = assets_growth_data_df.shape[0] + 4
     wbm.write_line_chart('资产视角看成长能力', [start,assets_growth_data_df.shape[0]+start,4,5],[2,assets_growth_data_df.shape[0]+1,1],f'H{start}')
 
-if __name__ == '__main__':
+def growth_analysis_data():
     income_growth_data()
     assets_growth_data()
+
+if __name__ == '__main__':
+    growth_analysis_data()

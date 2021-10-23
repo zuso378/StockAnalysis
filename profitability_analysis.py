@@ -40,7 +40,10 @@ def assets_data(df):
     start = df.shape[0] +3 + 1
     wbm.write_line_chart('资产视角看盈利能力', [start,df.shape[0]+start,8,9],[2,df.shape[0]+1,1],f'N{start}')
 
-if __name__ == '__main__':
+def profitablility_analysis_data():
     stock_profit_table_df = get_profit_table()
     income_data(stock_profit_table_df)
     assets_data(stock_profit_table_df)
+
+if __name__ == '__main__':
+    profitablility_analysis_data()

@@ -34,10 +34,13 @@ def cash_support_analysis_data(c_df, b_df):
     start = (df.shape[0] + 3) * 2 + 1
     wbm.write_line_chart('现金是否足以支撑投资和筹资活动分析', [start,df.shape[0]+start,7,10],[2,df.shape[0]+1,1],f'L{start}')
 
-if __name__ == '__main__':
+def cash_flow_analysis_data():
     stock_balance_table_df = get_balance_table()
     stock_profit_table_df = get_profit_table()
     stock_cashflow_table_df = get_cashflow_table()
     profit_quality_data(stock_profit_table_df, stock_cashflow_table_df)
     income_growth_analysis_data(stock_profit_table_df, stock_cashflow_table_df)
     cash_support_analysis_data(stock_cashflow_table_df, stock_balance_table_df)
+
+if __name__ == '__main__':
+    cash_flow_analysis_data()
